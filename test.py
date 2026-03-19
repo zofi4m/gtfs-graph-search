@@ -15,7 +15,7 @@ def test_graph2():
     graph = Graph.construct('./graph_data.csv')
     for n in graph.nodes.values():
         print(n)
-    node = graph.nodes['1413085.0']
+    node = graph.nodes['1413085']
     for e in node.adjacent_edges:
         print(e)
 
@@ -35,4 +35,4 @@ def test_date_filter2():
 
 # TODO: test graph + filtr
 
-test_graph2()
+test_graph1()

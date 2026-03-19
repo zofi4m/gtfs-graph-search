@@ -7,15 +7,32 @@ def prepare_data():
         h, m, s = map(int, time_str.split(':'))
         return h * 3600 + m * 60 + s
     
-    stops = pd.read_csv(DATASET_PATH + 'stops.txt')
+    # import ids as string, so that they dont get converted to float
+    stops = pd.read_csv(DATASET_PATH + 'stops.txt', dtype={
+        'stop_id': pd.StringDtype(),
+        'stop_name': pd.StringDtype(),
+        'parent_station': pd.StringDtype(),
+    })
     stops = stops[['stop_id', 'stop_name', 'stop_lat', 'stop_lon', 'parent_station']]
-    stop_times = pd.read_csv(DATASET_PATH + 'stop_times.txt')
+
+    stop_times = pd.read_csv(DATASET_PATH + 'stop_times.txt', dtype={
+        'trip_id': pd.StringDtype(),
+        'stop_id': pd.StringDtype()
+    })
     stop_times = stop_times[[
         'trip_id', 'stop_id', 'arrival_time', 'departure_time', 'stop_sequence'
     ]]
-    routes = pd.read_csv(DATASET_PATH + 'routes.txt')
+
+    routes = pd.read_csv(DATASET_PATH + 'routes.txt', dtype={
+        'route_id': pd.StringDtype(),
+    })
     routes = routes[['route_id', 'route_short_name', 'route_long_name']]
-    trips = pd.read_csv(DATASET_PATH + 'trips.txt')
+
+    trips = pd.read_csv(DATASET_PATH + 'trips.txt', dtype={
+        'route_id': pd.StringDtype(),
+        'trip_id': pd.StringDtype(),
+        'service_id': pd.StringDtype()
+    })
     trips = trips[['route_id', 'trip_id', 'service_id']]
     
     stop_times['departure_time'] = stop_times['departure_time'].apply(time_to_seconds)
