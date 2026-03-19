@@ -2,11 +2,11 @@ import pandas as pd
 
 DATASET_PATH = './data/'
 
-def prepare_data():
-    def time_to_seconds(time_str):
+def time_to_seconds(time_str):
         h, m, s = map(int, time_str.split(':'))
         return h * 3600 + m * 60 + s
-    
+
+def prepare_data():
     # import ids as string, so that they dont get converted to float
     stops = pd.read_csv(DATASET_PATH + 'stops.txt', dtype={
         'stop_id': pd.StringDtype(),

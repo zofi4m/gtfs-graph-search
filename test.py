@@ -33,6 +33,4 @@ def test_date_filter2():
     services = get_services_for_date('20260303')
     print("services:", list(services)[:10])
 
-# TODO: test graph + filtr
-
 test_graph1()

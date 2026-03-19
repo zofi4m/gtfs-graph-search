@@ -25,7 +25,7 @@ class Edge:
         self.service = service
 
     def __str__(self):
-        return f"Route {self.route}: {self.start_node.name}:{self.departure_time} -> {self.end_node.name}:{self.arrival_time}"
+        return f"Route {self.route}: {self.start_node.name}:{seconds_to_time(self.departure_time)} -> {self.end_node.name}:{seconds_to_time(self.arrival_time)}"
 
 class Graph:
     '''
@@ -35,8 +35,11 @@ class Graph:
     def __init__(self, nodes, name_map):
         self.nodes = nodes
         self.name_map = name_map
-
-    def construct(file_path: str, date='20260615'):
+                                       # friday 
+    def construct(file_path: str, date='20260324'):
+        '''
+        Default date: 24.03.2026
+        '''
         nodes : dict[str, Node] = dict()
         name_map : dict[str, str] = dict()
         '''
@@ -119,3 +122,7 @@ def get_services_for_date(date: str) -> set[str]:
                 elif except_type == '2':
                     services.discard(s_id)
     return services
+
+def seconds_to_time(s):
+    s = int(s)
+    return f"{s//3600:02d}:{(s%3600)//60:02d}:{s%60:02d}"
