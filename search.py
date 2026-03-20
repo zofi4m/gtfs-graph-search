@@ -20,14 +20,14 @@ def dijkstra(graph: Graph, start_stop_name: str, end_stop_name: str, start_time:
     pqueue = [(start_seconds, s_id)]
 
     while pqueue:
-        start_seconds, curr_id = heapq.heappop(pqueue)
+        curr_time, curr_id = heapq.heappop(pqueue)
 
-        if start_seconds > distances.get(curr_id, float('inf')):
+        if curr_time > distances.get(curr_id, float('inf')):
             continue
 
         node = graph.nodes[curr_id]
         for edge in node.adjacent_edges:
-            if edge.departure_time < start_seconds:
+            if edge.departure_time < curr_time:
                 continue
             
             neighbour = edge.end_node
@@ -47,7 +47,7 @@ def dijkstra(graph: Graph, start_stop_name: str, end_stop_name: str, start_time:
         curr_id = edge.start_node.stop_id
         
     algorithm_end = time.perf_counter()
-    return path, algorithm_end - algorithm_start, distances[e_id]
+    return path, algorithm_end - algorithm_start, distances[e_id] - start_seconds
 
 if __name__=="__main__":
     pass

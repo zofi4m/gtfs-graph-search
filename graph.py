@@ -42,11 +42,6 @@ class Graph:
         '''
         nodes : dict[str, Node] = dict()
         name_map : dict[str, str] = dict()
-        '''
-        TODO:
-            - check service validity (date)
-            - map names -> parent_id
-        '''
         active_services = get_services_for_date(date)
         with open(file_path, mode='r', encoding='utf-8') as graph_file:
             reader = csv.DictReader(graph_file)
