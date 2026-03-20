@@ -47,17 +47,8 @@ def dijkstra(graph: Graph, start_stop_name: str, end_stop_name: str, start_time:
         curr_id = edge.start_node.stop_id
         
     algorithm_end = time.perf_counter()
-    return path, algorithm_end - algorithm_start
+    return path, algorithm_end - algorithm_start, distances[e_id]
 
 if __name__=="__main__":
-    graph = Graph.construct('./graph_data.csv')
-    path, t = dijkstra(graph, 'Rawicz', 'Wrocław Główny', '13:33:00')
-    for e in path:
-        print(e)
-    print(t)
-
-    path2, t2 = dijkstra(graph, 'Brzeg', 'Borowa Oleśnicka', '4:34:04')
-    for e in path2:
-        print(e)
-    print(t2)
+    pass
     

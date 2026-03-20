@@ -1,5 +1,6 @@
 from graph import Graph, Node, get_services_for_date
 import datetime as dt
+from search import *
 
 def test_graph1():
     graph = Graph.construct('./graph_data.csv')
@@ -33,4 +34,17 @@ def test_date_filter2():
     services = get_services_for_date('20260303')
     print("services:", list(services)[:10])
 
-test_graph1()
+def test_dijkstra1():
+    graph = Graph.construct('./graph_data.csv')
+    path, t, crit = dijkstra(graph, 'Rawicz', 'Wrocław Główny', '13:33:00')
+    for e in path:
+        print(e)
+    print(t, crit, sep=' ')
+
+    path2, t2, crit2 = dijkstra(graph, 'Brzeg', 'Borowa Oleśnicka', '4:34:04')
+    for e in path2:
+        print(e)
+    print(t2, crit2, sep=' ')
+
+
+test_dijkstra1()
