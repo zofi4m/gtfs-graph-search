@@ -32,9 +32,10 @@ class Graph:
         Nodes are stored in a dictionary stop_id: node (for edge grouping by parent station).
         Edges are stored as adjacent edges in Node.
     '''
-    def __init__(self, nodes, name_map):
+    def __init__(self, nodes, name_map, incoming_edges):
         self.nodes = nodes
         self.name_map = name_map
+        self.incoming_edges = incoming_edges
                                        # friday 
     def construct(file_path: str, date='20260324'):
         '''
@@ -42,6 +43,7 @@ class Graph:
         '''
         nodes : dict[str, Node] = dict()
         name_map : dict[str, str] = dict()
+        incoming_edges : dict[str, list[Edge]] = dict()
         active_services = get_services_for_date(date)
         with open(file_path, mode='r', encoding='utf-8') as graph_file:
             reader = csv.DictReader(graph_file)
@@ -74,8 +76,11 @@ class Graph:
 
                 name_map[row['stop_name']] = s_id
                 name_map[row['next_stop_name']] = e_id
+                if e_id not in incoming_edges:
+                    incoming_edges[e_id] = []
+                incoming_edges[e_id].append(new_edge)
 
-        return Graph(nodes=nodes, name_map=name_map)
+        return Graph(nodes=nodes, name_map=name_map, incoming_edges=incoming_edges)
     
 def get_services_for_date(date: str) -> set[str]:
     DATASET_PATH = './data/'

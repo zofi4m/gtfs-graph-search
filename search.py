@@ -2,7 +2,7 @@ import time
 import heapq
 from graph import Graph, Node
 from prepare_data import time_to_seconds
-from util import heuristic_distance
+from util import heuristic_distance, get_contour_map, cost_transfers
 
 def dijkstra(graph: Graph, start_stop_name: str, end_stop_name: str, start_time: str):
     algorithm_start = time.perf_counter()
@@ -66,7 +66,7 @@ def astar(graph: Graph, start_stop_name: str, end_stop_name: str, start_time: st
     heuristic_costs = {s_id: start_h_cost}
     graph_costs = {s_id : start_seconds}
     
-    open_list = [(heuristic_costs, s_id)]
+    open_list = [(start_seconds + start_h_cost, s_id)]
     visited = set()
 
     previous = {}
@@ -106,6 +106,62 @@ def astar(graph: Graph, start_stop_name: str, end_stop_name: str, start_time: st
                                                 # TODO: h + g ?
     return path, algorithm_end - algorithm_start, graph_costs[e_id] - start_seconds
 
-if __name__=="__main__":
-    pass
+def astar_transfers(graph: Graph, start_stop_name: str, end_stop_name: str, start_time: str):
+    algorithm_start = time.perf_counter()
+    start_seconds = time_to_seconds(start_time)
+
+    s_id = graph.name_map[start_stop_name]
+    e_id = graph.name_map[end_stop_name]
+
+    end_node = graph.nodes[e_id]
+    
+    contour_map = get_contour_map(graph, end_node)
+    graph_costs = {s_id : 0}
+    # for tracking chronology
+    arrivals = {s_id: start_seconds}
+
+    open_list = [(contour_map.get(s_id, 0), 0, s_id)]
+    visited = set()
+
+    previous = {}
+
+    while(open_list):
+        curr_h, curr_t, curr_id = heapq.heappop(open_list)
+        if curr_id in visited:
+            continue
+        if curr_id == e_id:
+            break
+        
+        curr_node = graph.nodes[curr_id]
+        visited.add(curr_id)
+        prev_edge = previous.get(curr_id)
+        
+
+        for edge in curr_node.adjacent_edges:
+            if edge.departure_time < arrivals[curr_id]:
+                continue
+
+            transfer = cost_transfers(prev_edge, edge) if prev_edge else 0
+            new_transfers = graph_costs[curr_id] + transfer
+
+            next = edge.end_node
+            if new_transfers < graph_costs.get(next.stop_id, float('inf')):
+                previous[next.stop_id] = edge
+                graph_costs[next.stop_id] = new_transfers
+                arrivals[next.stop_id] = edge.arrival_time
+                h = contour_map.get(next.stop_id, 0)
+                                                        # arrival time for breaking ties
+                heapq.heappush(open_list, (new_transfers + h, edge.arrival_time, next.stop_id))
+
+    path = []
+    curr_id = e_id
+
+    while curr_id in previous:
+        edge = previous[curr_id]
+        path.insert(0, edge)
+        curr_id = edge.start_node.stop_id
+        
+    algorithm_end = time.perf_counter()
+    return path, algorithm_end - algorithm_start, graph_costs.get(e_id, 0) - 1
+
     

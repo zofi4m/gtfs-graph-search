@@ -1,6 +1,6 @@
 import sys
 from graph import Graph, seconds_to_time
-from search import dijkstra, astar
+from search import dijkstra, astar, astar_transfers
 # TODO: A* variants
 
 GRAPH_PATH = './graph_data.csv'
@@ -65,12 +65,16 @@ def run(graph: Graph):
             travel_time = seconds_to_time(cost)
             print_path(path)
             print(f"Minimized criterion (travel time): {travel_time}", file=sys.stderr)
-            print(f"Computation time: {elapsed:.4f}s", file=sys.stderr)
+            print(f"Computation time: {elapsed:.6f}s", file=sys.stderr)
 
         elif criterion == 'p':
-            # path, elapsed, cost = astar_transfers(graph, start, end, start_time)
-            print("Criterion 'p' not yet implemented.", file=sys.stderr)
-            continue
+            # TODO: ommit if dijkstra
+            path, elapsed, cost = astar_transfers(graph, start, end, start_time)
+            print_path(path)
+            print(f"Minimized criterion (no. transfers): {cost}", file=sys.stderr)
+            print(f"Computation time: {elapsed:.6f}s", file=sys.stderr)
+
+            
 
 if __name__ == "__main__":
     
@@ -81,6 +85,17 @@ if __name__ == "__main__":
 
 '''
 Example inputs:
+a
 Brzeg; Borowa Oleśnicka; t; 06:51:00
+Brzeg; Borowa Oleśnicka; p; 06:51:00
+Trzebnica; Wrocław Sołtysowice; t; 07:10:00
+Trzebnica; Wrocław Sołtysowice; p; 07:10:00
 
+d 
+Jelenia Góra; Wałbrzych Główny; t; 10:00:00
+Kłodzko Główne; Świdnica Miasto; t; 16:00:00
+
+a
+Jelenia Góra; Wałbrzych Główny; t; 10:00:00
+Kłodzko Główne; Świdnica Miasto; t; 16:00:00
 '''
