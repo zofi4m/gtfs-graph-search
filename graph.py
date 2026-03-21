@@ -15,7 +15,7 @@ class Node:
         return f"{self.stop_id} {self.name} lat:{self.latitude} lon:{self.longitude}"
 
 class Edge:
-    def __init__(self, route: str, service: str, start_node: Node, end_node: Node, 
+    def __init__(self, trip_id, route: str, service: str, start_node: Node, end_node: Node, 
                  departure_time: float, arrival_time: float):
         self.route = route
         self.start_node = start_node
@@ -23,6 +23,7 @@ class Edge:
         self.departure_time = departure_time # from start
         self.arrival_time = arrival_time # at end
         self.service = service
+        self.trip = trip_id
 
     def __str__(self):
         return f"Route {self.route}: {self.start_node.name}:{seconds_to_time(self.departure_time)} -> {self.end_node.name}:{seconds_to_time(self.arrival_time)}"
@@ -65,6 +66,7 @@ class Graph:
                 # collapse route names
                 route_name = row['route_short_name'] if row['route_short_name'] else row['route_long_name']
                 new_edge = Edge(
+                    trip_id=row['trip_id'],
                     route=route_name,
                     service=row['service_id'],
                     start_node=start_node,

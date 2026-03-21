@@ -145,13 +145,18 @@ def astar_transfers(graph: Graph, start_stop_name: str, end_stop_name: str, star
             new_transfers = graph_costs[curr_id] + transfer
 
             next = edge.end_node
-            if new_transfers < graph_costs.get(next.stop_id, float('inf')):
-                previous[next.stop_id] = edge
-                graph_costs[next.stop_id] = new_transfers
-                arrivals[next.stop_id] = edge.arrival_time
-                h = contour_map.get(next.stop_id, 0)
+            next_id = next.stop_id
+            curr_best_transfers = graph_costs.get(next_id, float('inf'))
+            curr_best_arrival = arrivals.get(next_id, float('inf'))
+            # ensure not dropping equally good transfers with better time
+            if (new_transfers < curr_best_transfers or
+                    (new_transfers == curr_best_transfers and edge.arrival_time < curr_best_arrival)):
+                previous[next_id] = edge
+                graph_costs[next_id] = new_transfers
+                arrivals[next_id] = edge.arrival_time
+                h = contour_map.get(next_id, 0)
                                                         # arrival time for breaking ties
-                heapq.heappush(open_list, (new_transfers + h, edge.arrival_time, next.stop_id))
+                heapq.heappush(open_list, (new_transfers + h, edge.arrival_time, next_id))
 
     path = []
     curr_id = e_id
@@ -162,6 +167,6 @@ def astar_transfers(graph: Graph, start_stop_name: str, end_stop_name: str, star
         curr_id = edge.start_node.stop_id
         
     algorithm_end = time.perf_counter()
-    return path, algorithm_end - algorithm_start, graph_costs.get(e_id, 0) - 1
+    return path, algorithm_end - algorithm_start, graph_costs.get(e_id, 0)
 
     

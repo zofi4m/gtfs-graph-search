@@ -19,11 +19,11 @@ def heuristic_distance(node: Node, end: Node) -> float:
     return dist / MAX_SPEED_MS
 
 def cost_transfers(edge1: Edge, edge2: Edge) -> float:
-    return 0 if edge1.route == edge2.route else 1
+    return 0 if edge1.trip == edge2.trip else 1
 
 def get_contour_map(graph: Graph, dest: Node) -> dict:
     '''
-    Returns dictionary with mapping: {stop_id: manhattan distance from goal}
+    Returns dictionary with mapping: {stop_id: minimum number of edges to goal}
     '''
     d_id = dest.stop_id
     contour = {d_id: 0}
@@ -38,7 +38,8 @@ def get_contour_map(graph: Graph, dest: Node) -> dict:
             if next_id not in contour:
                 contour[next_id] = curr_transfers + 1
                 queue.append(next_id)
-
+    # apply weight to the heuristic
+    contour = {k: v * 0.3 for k, v in contour.items()}
     return contour
 
 

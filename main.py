@@ -98,4 +98,8 @@ Kłodzko Główne; Świdnica Miasto; t; 16:00:00
 a
 Jelenia Góra; Wałbrzych Główny; t; 10:00:00
 Kłodzko Główne; Świdnica Miasto; t; 16:00:00
+
+a
+Głogów; Lubań Śląski; p; 12:30:00
+Trzebnica; Wrocław Sołtysowice; p; 07:10:00
 '''
