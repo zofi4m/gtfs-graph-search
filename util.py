@@ -1,6 +1,8 @@
 from graph import Node, Edge, Graph
 from math import radians, sin, cos, sqrt, atan2
 
+TRANSFER_WEIGHT = 2 * 3600
+
 def haversine(lat1, lon1, lat2, lon2) -> float:
     R = 6_371_000
     phi1, phi2 = radians(lat1), radians(lat2)
@@ -41,6 +43,3 @@ def get_contour_map(graph: Graph, dest: Node) -> dict:
     # apply weight to the heuristic
     contour = {k: v * 0.3 for k, v in contour.items()}
     return contour
-
-
-    

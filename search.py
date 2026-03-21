@@ -2,7 +2,7 @@ import time
 import heapq
 from graph import Graph, Node
 from prepare_data import time_to_seconds
-from util import heuristic_distance, get_contour_map, cost_transfers
+from util import heuristic_distance, get_contour_map, cost_transfers, TRANSFER_WEIGHT
 
 def dijkstra(graph: Graph, start_stop_name: str, end_stop_name: str, start_time: str):
     algorithm_start = time.perf_counter()
@@ -168,5 +168,66 @@ def astar_transfers(graph: Graph, start_stop_name: str, end_stop_name: str, star
         
     algorithm_end = time.perf_counter()
     return path, algorithm_end - algorithm_start, graph_costs.get(e_id, 0)
+
+def astar_combined(graph: Graph, start_stop_name: str, end_stop_name: str, start_time: str):
+    algorithm_start = time.perf_counter()
+    start_seconds = time_to_seconds(start_time)
+
+    s_id = graph.name_map[start_stop_name]
+    e_id = graph.name_map[end_stop_name]
+
+    start_node = graph.nodes[s_id]
+    end_node = graph.nodes[e_id]
+    
+    start_h_cost = heuristic_distance(start_node, end_node)
+    
+    arrivals = {s_id : 0}
+    penalties = {s_id : 0}
+    
+    open_list = [(start_h_cost, start_seconds, s_id)]
+    visited = set()
+
+    previous = {}
+
+    while(open_list):
+        curr_f, curr_t, curr_id = heapq.heappop(open_list)
+        if curr_id in visited:
+            continue
+        if curr_id == e_id:
+            break
+
+        curr_node = graph.nodes[curr_id]
+        visited.add(curr_id)
+        prev_edge = previous.get(curr_id)
+        
+        for edge in curr_node.adjacent_edges:
+            if edge.departure_time < curr_t:
+                continue
+
+            next = edge.end_node
+            next_id = next.stop_id
+            penalty = TRANSFER_WEIGHT if (prev_edge and prev_edge.trip != edge.trip) else 0
+            new_penalty = penalties[curr_id] + penalty
+            combined = edge.arrival_time + new_penalty
+
+            if combined < arrivals.get(next_id, float('inf')) + penalties.get(next_id, 0):
+                penalties[next_id] = new_penalty
+                arrivals[next_id] = edge.arrival_time
+                previous[next_id] = edge
+                h = heuristic_distance(edge.end_node, end_node)
+                heapq.heappush(open_list, (combined + h, edge.arrival_time, next_id))
+
+    path = []
+    curr_id = e_id
+
+    while curr_id in previous:
+        edge = previous[curr_id]
+        path.insert(0, edge)
+        curr_id = edge.start_node.stop_id
+        
+    algorithm_end = time.perf_counter()
+    n_transfers = sum(cost_transfers(a, b) for a, b in zip(path, path[1:]))
+    travel_time = path[-1].arrival_time - start_seconds if path else 0
+    return path, algorithm_end - algorithm_start, n_transfers, travel_time
 
     

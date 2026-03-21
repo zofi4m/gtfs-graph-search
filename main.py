@@ -1,13 +1,14 @@
 import sys
 from graph import Graph, seconds_to_time
-from search import dijkstra, astar, astar_transfers
+from search import dijkstra, astar, astar_transfers, astar_combined
 # TODO: A* variants
 
 GRAPH_PATH = './graph_data.csv'
 
 ALGORITHMS = {
     'd': ('Dijkstra', dijkstra),
-    'a': ('A*', astar)
+    'a': ('A*', astar),
+    'ac': ('A* combined (transfers + time)', astar_combined)    # quality improvement
 }
 
 def print_path(path: list):
@@ -15,7 +16,7 @@ def print_path(path: list):
         print("No connection found", file=sys.stderr)
         return
     for edge in path:
-        print(edge)
+        print(f"{edge.trip} {edge}")
 
 def select_algorithm() -> tuple:
     options = ', '.join(f"'{k}' = {label}" for k, (label, _) in ALGORITHMS.items())
@@ -60,6 +61,14 @@ def run(graph: Graph):
             print(f"Error: unknown stop '{end}'.", file=sys.stderr)
             continue
 
+        if algorithm == astar_combined:
+            path, elapsed, transfers, travel_time = algorithm(graph, start, end, start_time)
+            print_path(path)
+            print(f"Transfers: {transfers}", file=sys.stderr)
+            print(f"Travel time: {seconds_to_time(travel_time)}", file=sys.stderr)
+            print(f"Computation time: {elapsed:.6f}s", file=sys.stderr)
+            continue
+
         if criterion == 't':
             path, elapsed, cost = algorithm(graph, start, end, start_time)
             travel_time = seconds_to_time(cost)
@@ -67,9 +76,9 @@ def run(graph: Graph):
             print(f"Minimized criterion (travel time): {travel_time}", file=sys.stderr)
             print(f"Computation time: {elapsed:.6f}s", file=sys.stderr)
 
-        elif criterion == 'p':
-            # TODO: ommit if dijkstra
-            path, elapsed, cost = astar_transfers(graph, start, end, start_time)
+        if criterion == 'p':
+            fn = astar_transfers # only with transfer count
+            path, elapsed, cost = fn(graph, start, end, start_time)
             print_path(path)
             print(f"Minimized criterion (no. transfers): {cost}", file=sys.stderr)
             print(f"Computation time: {elapsed:.6f}s", file=sys.stderr)
@@ -101,5 +110,11 @@ Kłodzko Główne; Świdnica Miasto; t; 16:00:00
 
 a
 Głogów; Lubań Śląski; p; 12:30:00
-Trzebnica; Wrocław Sołtysowice; p; 07:10:00
+Głogów; Lubań Śląski; t; 12:30:00
+
+ac
+Głogów; Lubań Śląski; t; 12:30:00
+Trzebnica; Wrocław Sołtysowice; t; 07:10:00
+Jelenia Góra; Wałbrzych Główny; t; 10:00:00
+Kłodzko Główne; Świdnica Miasto; t; 16:00:00
 '''

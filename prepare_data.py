@@ -60,7 +60,7 @@ def prepare_data():
     cols_to_save = [
         'stop_id', 'next_stop_id', 'stop_name', 'next_stop_name', 'departure_time', 'arrival_at_next', 'parent_station', 
         'next_parent_station', 'route_short_name', 'route_long_name', 'trip_id', 
-        'service_id', 'stop_lat', 'stop_lon', 'next_stop_lat', 'next_stop_lon'
+        'service_id', 'stop_lat', 'stop_lon', 'next_stop_lat', 'next_stop_lon', 'stop_sequence'
     ]
     edges[cols_to_save].to_csv('graph_data.csv', index=False)
 

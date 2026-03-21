@@ -1,4 +1,4 @@
-from graph import Graph, Node, get_services_for_date
+from graph import Graph, get_services_for_date, seconds_to_time
 import datetime as dt
 from search import *
 
@@ -19,6 +19,12 @@ def test_graph2():
     node = graph.nodes['1413085']
     for e in node.adjacent_edges:
         print(e)
+
+def test_graph3():
+    graph = Graph.construct('./graph_data.csv')
+    node = graph.nodes[graph.name_map['Trzebnica']]
+    for edge in node.adjacent_edges:
+        print(f"{edge.start_node.name} -> {edge.end_node.name} dep:{seconds_to_time(edge.departure_time)}")
 
 def test_date_filter1():
     print(dt.datetime.strptime('20260601', '%Y%m%d'))
@@ -46,5 +52,13 @@ def test_dijkstra1():
         print(e)
     print(t2, crit2, sep=' ')
 
+# import pandas as pd
+# df = pd.read_csv('graph_data.csv', dtype={
+#     'stop_id': pd.StringDtype(),
+#     'parent_station': pd.StringDtype(),
+#     'next_parent_station': pd.StringDtype(),
+# })
 
-test_dijkstra1()
+# mask = (df['stop_name'] == 'Trzebnica') & (df['next_stop_name'] == 'Wrocław Zakrzów')
+# print(df[mask][['trip_id', 'stop_name', 'next_stop_name', 'stop_sequence']])
+
