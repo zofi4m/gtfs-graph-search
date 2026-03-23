@@ -16,7 +16,7 @@ def print_path(path: list):
         print("No connection found", file=sys.stderr)
         return
     for edge in path:
-        print(f"{edge.trip} {edge}")
+        print(edge)
 
 def select_algorithm() -> tuple:
     options = ', '.join(f"'{k}' = {label}" for k, (label, _) in ALGORITHMS.items())
