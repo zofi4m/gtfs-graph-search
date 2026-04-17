@@ -37,7 +37,8 @@ class Graph:
         self.nodes = nodes
         self.name_map = name_map
         self.incoming_edges = incoming_edges
-                                       # friday 
+    
+    @staticmethod                         # friday 
     def construct(file_path: str, date='20260324'):
         '''
         Default date: 24.03.2026

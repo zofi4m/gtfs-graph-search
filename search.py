@@ -47,6 +47,10 @@ def dijkstra(graph: Graph, start_stop_name: str, end_stop_name: str, start_time:
         curr_id = edge.start_node.stop_id
         
     algorithm_end = time.perf_counter()
+
+    if e_id not in distances:
+        return [], algorithm_end - algorithm_start, float('inf')
+
     return path, algorithm_end - algorithm_start, distances[e_id] - start_seconds
 
 def astar(graph: Graph, start_stop_name: str, end_stop_name: str, start_time: str):
@@ -103,7 +107,10 @@ def astar(graph: Graph, start_stop_name: str, end_stop_name: str, start_time: st
         curr_id = edge.start_node.stop_id
         
     algorithm_end = time.perf_counter()
-                                                # TODO: h + g ?
+
+    if e_id not in graph_costs:
+        return [], algorithm_end - algorithm_start, float('inf')
+                                                
     return path, algorithm_end - algorithm_start, graph_costs[e_id] - start_seconds
 
 def astar_transfers(graph: Graph, start_stop_name: str, end_stop_name: str, start_time: str):
@@ -226,6 +233,10 @@ def astar_combined(graph: Graph, start_stop_name: str, end_stop_name: str, start
         curr_id = edge.start_node.stop_id
         
     algorithm_end = time.perf_counter()
+    
+    if e_id not in arrivals:
+        return [], algorithm_end - algorithm_start, 0, float('inf')
+    
     n_transfers = sum(cost_transfers(a, b) for a, b in zip(path, path[1:]))
     travel_time = path[-1].arrival_time - start_seconds if path else 0
     return path, algorithm_end - algorithm_start, n_transfers, travel_time

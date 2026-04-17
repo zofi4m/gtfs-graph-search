@@ -1,5 +1,6 @@
 import sys
 from graph import Graph, seconds_to_time
+from prepare_data import time_to_seconds
 from search import dijkstra, astar, astar_transfers, astar_combined
 # TODO: A* variants
 
@@ -50,6 +51,13 @@ def run(graph: Graph):
             continue
 
         start, end, criterion, start_time = [p.strip() for p in parts]
+        try:
+            _ = time_to_seconds(start_time) # for validation
+        except Exception:
+            print("Error: invalid time format, expected HH:MM:SS.", file=sys.stderr)
+            continue
+
+
         if criterion not in ('t', 'p'):
             print("Error: criterion must be 't' (travel time) or 'p' (transfers).", file=sys.stderr)
             continue
@@ -93,7 +101,7 @@ if __name__ == "__main__":
     run(graph)
 
 '''
-Example inputs:
+Example inputs (for Koleje Dolnośląskie):
 a
 Brzeg; Borowa Oleśnicka; t; 06:51:00
 Brzeg; Borowa Oleśnicka; p; 06:51:00

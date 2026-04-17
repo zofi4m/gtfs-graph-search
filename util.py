@@ -34,7 +34,7 @@ def get_contour_map(graph: Graph, dest: Node) -> dict:
     while (queue):
         curr_id = queue.pop(0)
         curr_transfers = contour[curr_id]
-        incoming_edges = graph.incoming_edges[curr_id]
+        incoming_edges = graph.incoming_edges.get(curr_id, [])
         for edge in incoming_edges:
             next_id = edge.start_node.stop_id
             if next_id not in contour:
