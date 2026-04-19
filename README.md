@@ -30,7 +30,17 @@ Purpose of this project was to learn about heuristic search algorithms and pract
 1. (Optional) Create and activate [virtual environment](https://docs.python.org/3/library/venv.html).
 2. Install dependencies:
    - `pip install -r requirements.txt`
-3. Generate graph data:
+3. Add GTFS data:
+   - create `data/` in project root
+   - put GTFS files into `data/`
+   - required files:
+     - `stops.txt`
+     - `stop_times.txt`
+     - `routes.txt`
+     - `trips.txt`
+     - `calendar.txt`
+     - `calendar_dates.txt`
+4. Generate graph data:
    - `python prepare_data.py`
-4. Start the app:
+5. Start the app:
    - `python main.py`
